@@ -15,8 +15,6 @@ loginMatch = async (val, req) => {
   });
   if (user === null)
     throw new Error("Username and password does not match.");
-  else if (user.password === null)
-    throw new Error("Votre compte n'est pas activé.");
   let isCorrect = await argon2.verify(user.password, req.body.password);
   if (!isCorrect)
     throw new Error("Username and password does not match.");
