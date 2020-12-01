@@ -3,7 +3,6 @@ const models = require("../database/models");
 module.exports = async (req, res, next) => {
 	try {
 		let id = models.Users.getIdFromToken(req);
-		console.log(id);
 		if (id == null) {
 			next()
 		}

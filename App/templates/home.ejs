@@ -24,6 +24,7 @@
                     </button>
                 </div>
             <% } %>
+                <% if (locals.user && locals.token) { %>
             <h1>Welcome <%= user.email %> back !</h1>
             Here is your profile informations:
             <ul>
@@ -31,6 +32,7 @@
                 <li>Password: <%= user.password %></li>
                 <li>Token: <%= token %></li>
             </ul>
+            <% } %>
         </div>
         <div class="col">
         </div>
