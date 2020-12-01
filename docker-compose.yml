@@ -1,0 +1,58 @@
+version: '3'
+services:
+  nginx:
+    container_name: vgtu_balancer
+    build: ./nginx
+    links:
+      - app:app
+      - pgadmin:pgadmin
+    ports:
+      - "80:80"
+  app:
+    image: vgtubackend
+    container_name: vgtu_nodejs_api
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://vgtu_usr:3fhsutbcqJr7GPTy@postgres:5432/vgtu
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app/
+      - /app/node_modules
+      - ./test_results:/tests
+    restart: unless-stopped
+
+  postgres:
+    container_name: vgtu_pgsql_db
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: vgtu_usr
+      POSTGRES_PASSWORD: 3fhsutbcqJr7GPTy
+      POSTGRES_DB: vgtu
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "35432:5432"
+    restart: unless-stopped
+
+  pgadmin:
+    hostname: pgadmin
+    container_name: vgtu_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-corentin.mattern@stud.vgtu.lt}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-c89X4kK2x55PUkE3}
+    volumes:
+      - pgadmin:/root/.pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    restart: unless-stopped
+
+volumes:
+    postgres:
+    pgadmin:
