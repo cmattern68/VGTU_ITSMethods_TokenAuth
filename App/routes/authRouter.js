@@ -1,14 +1,17 @@
 let express = require('express');
 let router = express.Router();
 let bodyParser = require('body-parser');
-let authController = require('../controllers/authController');
-let authValidator = require('../validator/authValidator');
+const authController = require('../controllers/authController');
+const authValidator = require('../validator/authValidator');
+const authMiddleware = require('../middleware/authMiddleware');
+const isLoggedMiddleware = require('../middleware/isLoggedMiddleware');
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: true}));
 router.use(express.json())
 
-router.get('/', authController.log);
-router.post('/login', authValidator.login, authController.login);
+router.get('/login', [isLoggedMiddleware] , authController.log);
+router.post('/login', authValidator.login, [isLoggedMiddleware], authController.login);
+router.get('/home', [authMiddleware], authController.home);
 
 module.exports = router;

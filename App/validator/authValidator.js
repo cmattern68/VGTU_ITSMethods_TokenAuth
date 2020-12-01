@@ -4,8 +4,8 @@ const argon2 = require('@phc/argon2');
 const { v4: uuidv4, validate: validate } = require('uuid');
 
 exports.login = [
-  check('email', 'L\'Adresse email est invalide.').isEmail().normalizeEmail().trim().escape(),
-  check('password', 'Le mot de passe est invalide.').trim().escape().custom((val, {req}) => loginMatch(val, req))
+  check('email', 'Email address is not valid.').isEmail().normalizeEmail().trim().escape(),
+  check('password', 'Password is not valid.').trim().escape().custom((val, {req}) => loginMatch(val, req))
 ];
 
 loginMatch = async (val, req) => {
@@ -13,13 +13,12 @@ loginMatch = async (val, req) => {
     where: { email: req.body.email },
     attributes: ['password']
   });
-  console.log(req);
   if (user === null)
-    throw new Error("Le nom d'utilisateur et le mot de passe ne correspondent pas 1.");
+    throw new Error("Username and password does not match.");
   else if (user.password === null)
     throw new Error("Votre compte n'est pas activé.");
   let isCorrect = await argon2.verify(user.password, req.body.password);
   if (!isCorrect)
-    throw new Error("Le nom d'utilisateur et le mot de passe ne correspondent pas 2.");
+    throw new Error("Username and password does not match.");
   return val;
 }

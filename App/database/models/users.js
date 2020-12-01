@@ -12,13 +12,12 @@ module.exports = (sequelize, DataTypes) => {
   Users.associate = function(models) {
     // associations can be defined here
   };
-  Users.getIdFromToken = function(token) {
+  Users.getIdFromToken = function(req) {
     try {
-      if (token == undefined || token.split(' ')[1] == undefined)
+      if (req.cookies.token === undefined)
         return null;
-      token = token.split(' ')[1];
       const publicKey = fs.readFileSync(path.dirname(require.main.filename) + '/RSA/jwtRS256.key.pub');
-      const decodedToken = jwt.verify(token, publicKey);
+      const decodedToken = jwt.verify(req.cookies.token, publicKey);
       return decodedToken.userId;
     } catch(err) {
       return null;

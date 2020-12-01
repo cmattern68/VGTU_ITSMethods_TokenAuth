@@ -2,24 +2,22 @@ const models = require("../database/models");
 
 module.exports = async (req, res, next) => {
   try {
-    let id = models.Users.getIdFromToken(req.headers.authorization);
+    let id = models.Users.getIdFromToken(req);
     if (id == null) {
-      throw 'Vous n\'êtes pas autorisé a accéder à cette page.';
+      throw 'Unauthorized.';
     }
     const user = await models.Users.findOne({
       where: { id:  id},
       attributes: ['id']
     });
     if (user == null) {
-      res.status(401).json({
-        error: 'Requête invalide.'
-      });
+      throw 'Unauthorized.';
     } else {
       next();
     }
   } catch (err) {
-    res.status(401).json({
-      error: 'Requête invalide.'
+    res.status(401).render('home', {
+      error: err
     });
   }
 }
