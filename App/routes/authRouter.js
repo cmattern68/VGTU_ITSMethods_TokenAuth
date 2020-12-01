@@ -8,6 +8,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: true}));
 router.use(express.json())
 
+router.get('/', authController.log);
 router.post('/login', authValidator.login, authController.login);
 
 module.exports = router;
